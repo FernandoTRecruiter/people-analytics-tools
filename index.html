@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>People Analytics Tools · Fernando L. Paoli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #111110;
+    --ink2: #5a5a57;
+    --ink3: #9a9a96;
+    --border: #e8e8e4;
+    --bg: #fafaf8;
+    --bg2: #f2f2ee;
+    --white: #ffffff;
+    --purple: #6366f1;
+    --cyan: #06b6d4;
+    --amber: #f59e0b;
+    --rose: #f43f5e;
+    --green: #10b981;
+    --radius: 12px;
+    --radius-sm: 7px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Geist', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,250,248,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem; color: var(--ink); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-brand span { font-size: .65rem; font-family: 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: .72rem; font-family: 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3); text-decoration: none; transition: color .15s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    font-size: .7rem; font-family: 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase;
+    background: var(--ink); color: #fff; padding: 7px 16px; border-radius: 6px; text-decoration: none;
+    transition: opacity .15s;
+  }
+  .nav-cta:hover { opacity: .8; }
+
+  /* HERO */
+  .hero {
+    max-width: 900px; margin: 0 auto;
+    padding: 5rem 2rem 4rem;
+    display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--purple); margin-bottom: .75rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--purple); }
+  .hero-title {
+    font-family: 'DM Serif Display', serif; font-size: clamp(2.2rem, 5vw, 3.2rem);
+    font-weight: 400; line-height: 1.15; color: var(--ink); margin-bottom: 1rem;
+  }
+  .hero-title em { font-style: italic; color: var(--purple); }
+  .hero-sub { font-size: .95rem; color: var(--ink2); line-height: 1.7; max-width: 480px; margin-bottom: 1.75rem; }
+  .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-primary {
+    font-size: .72rem; font-family: 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase;
+    background: var(--ink); color: #fff; padding: 10px 20px; border-radius: var(--radius-sm);
+    text-decoration: none; transition: opacity .15s; border: none; cursor: pointer;
+  }
+  .btn-primary:hover { opacity: .8; }
+  .btn-secondary {
+    font-size: .72rem; font-family: 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase;
+    background: transparent; color: var(--ink); padding: 10px 20px; border-radius: var(--radius-sm);
+    text-decoration: none; transition: border-color .15s, color .15s; border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--ink); }
+  .hero-badge {
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.5rem; text-align: center; min-width: 160px;
+  }
+  .hero-badge-num { font-family: 'DM Serif Display', serif; font-size: 3rem; line-height: 1; color: var(--ink); }
+  .hero-badge-label { font-size: .62rem; font-family: 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-top: 6px; }
+  .hero-badge-sub { font-size: .68rem; color: var(--ink2); margin-top: 8px; line-height: 1.5; }
+
+  /* SECTION WRAPPER */
+  .section { max-width: 900px; margin: 0 auto; padding: 3.5rem 2rem; }
+  .section + .section { border-top: 1px solid var(--border); }
+  .sec-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--ink3); margin-bottom: .5rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .sec-eyebrow::before { content: ''; width: 16px; height: 1px; background: var(--ink3); }
+  .sec-title { font-family: 'DM Serif Display', serif; font-size: 1.75rem; font-weight: 400; color: var(--ink); margin-bottom: .3rem; }
+  .sec-sub { font-size: .88rem; color: var(--ink2); margin-bottom: 2rem; }
+
+  /* STAT CARDS */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 2rem; }
+  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem 1rem; }
+  .stat-card-num { font-family: 'DM Serif Display', serif; font-size: 1.8rem; line-height: 1; }
+  .stat-card-label { font-size: .6rem; font-family: 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-top: 5px; }
+
+  /* CHART GRID */
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .chart-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+  .chart-card-label { font-size: .62rem; font-family: 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1rem; }
+  .chart-canvas-wrap { position: relative; height: 180px; }
+  .custom-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .leg-item { display: flex; align-items: center; gap: 5px; font-size: .7rem; color: var(--ink2); }
+  .leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+  /* BAR CHART CUSTOM */
+  .bar-rows { margin-top: 4px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .bar-lbl { font-size: .7rem; font-family: 'DM Mono', monospace; color: var(--ink2); width: 130px; flex-shrink: 0; text-align: right; }
+  .bar-track { flex: 1; height: 8px; background: var(--bg2); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; width: 0; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+  .bar-val { font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--ink3); width: 40px; }
+
+  /* TABS */
+  .tabs-nav { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .tabs-nav button {
+    font-size: .7rem; font-family: 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase;
+    padding: 9px 18px; border: none; background: none; color: var(--ink3); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s;
+  }
+  .tabs-nav button.active { color: var(--ink); border-bottom-color: var(--ink); }
+
+  /* CALCULATOR */
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field { margin-bottom: .85rem; }
+  .field label { display: block; font-size: .62rem; font-family: 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--ink3); margin-bottom: 5px; }
+  .field input {
+    width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    font-size: .88rem; font-family: 'Geist', sans-serif; color: var(--ink); background: var(--bg);
+    outline: none; transition: border-color .15s;
+  }
+  .field input:focus { border-color: var(--ink); background: var(--white); }
+  .calc-result {
+    background: var(--ink); color: #fff; border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1rem; opacity: 0; transform: translateY(4px); transition: opacity .25s, transform .25s;
+  }
+  .calc-result.show { opacity: 1; transform: none; }
+  .res-label { font-size: .6rem; font-family: 'DM Mono', monospace; letter-spacing: .1em; opacity: .5; margin-bottom: 4px; }
+  .res-val { font-family: 'DM Serif Display', serif; font-size: 1.8rem; line-height: 1; }
+  .res-tag { font-size: .68rem; font-family: 'DM Mono', monospace; letter-spacing: .05em; opacity: .6; text-align: right; max-width: 180px; }
+  .funnel-out { display: none; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 1rem; }
+  .funnel-out.show { display: grid; }
+  .fc { background: var(--ink); color: #fff; border-radius: var(--radius-sm); padding: 12px 8px; text-align: center; }
+  .fc-n { font-family: 'DM Serif Display', serif; font-size: 1.4rem; line-height: 1; }
+  .fc-l { font-size: .58rem; font-family: 'DM Mono', monospace; letter-spacing: .07em; opacity: .5; text-transform: uppercase; margin-top: 4px; }
+
+  /* ORG CHART */
+  .org-hint { font-size: .72rem; font-family: 'DM Mono', monospace; color: var(--ink3); margin-bottom: 2rem; letter-spacing: .04em; }
+  .org-wrap { display: flex; flex-direction: column; align-items: center; }
+  .org-boss {
+    background: var(--ink); border-radius: var(--radius); padding: 14px 24px;
+    text-align: center; min-width: 200px; cursor: default;
+    position: relative;
+  }
+  .org-boss-emo { font-size: 28px; line-height: 1; margin-bottom: 6px; }
+  .org-boss-name { font-size: .9rem; font-weight: 500; color: #fff; }
+  .org-boss-role { font-size: .6rem; font-family: 'DM Mono', monospace; color: rgba(255,255,255,.45); letter-spacing: .06em; margin-top: 3px; }
+  .org-vline { width: 1.5px; height: 28px; background: var(--border); margin: 0 auto; }
+  .org-hline { height: 1.5px; background: var(--border); }
+  .org-teams { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; width: 100%; }
+  .org-team { display: flex; flex-direction: column; align-items: center; }
+  .org-team-label {
+    font-size: .6rem; font-family: 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink2); background: var(--white); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 14px; white-space: nowrap;
+  }
+  .org-members { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .org-branch { display: flex; flex-direction: column; align-items: center; }
+  .org-member-wrap { position: relative; }
+  .org-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 12px 14px; text-align: center; min-width: 92px; max-width: 108px;
+    cursor: pointer; transition: border-color .18s, transform .18s;
+    perspective: 600px;
+  }
+  .org-card:hover { border-color: var(--ink); transform: translateY(-3px); }
+  .org-card.flipped { background: var(--ink); border-color: var(--ink); }
+  .org-card-emo { font-size: 24px; line-height: 1; margin-bottom: 5px; transition: opacity .15s; }
+  .org-card.flipped .org-card-emo { opacity: .35; }
+  .org-card-name { font-size: .72rem; font-weight: 500; color: var(--ink); line-height: 1.2; }
+  .org-card.flipped .org-card-name { color: #fff; }
+  .org-card-role { font-size: .58rem; font-family: 'DM Mono', monospace; color: var(--ink3); letter-spacing: .04em; margin-top: 3px; line-height: 1.3; }
+  .org-card.flipped .org-card-role { color: rgba(255,255,255,.4); }
+  .org-card-secret { display: none; font-size: .6rem; color: rgba(255,255,255,.55); font-family: 'DM Mono', monospace; margin-top: 6px; line-height: 1.4; font-style: italic; }
+  .org-card.flipped .org-card-secret { display: block; }
+  .org-tip {
+    position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: #fff; border-radius: var(--radius-sm);
+    padding: 8px 12px; font-size: .64rem; font-family: 'DM Mono', monospace;
+    white-space: nowrap; max-width: 210px; white-space: normal; text-align: center;
+    line-height: 1.4; pointer-events: none; opacity: 0; transition: opacity .18s; z-index: 20;
+  }
+  .org-tip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: var(--ink); }
+  .org-member-wrap:hover .org-tip { opacity: 1; }
+
+  /* PROFILE */
+  .profile-grid { display: grid; grid-template-columns: auto 1fr; gap: 2rem; align-items: start; }
+  .profile-avatar {
+    width: 80px; height: 80px; border-radius: 50%; background: var(--bg2);
+    border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem; flex-shrink: 0;
+  }
+  .profile-name { font-family: 'DM Serif Display', serif; font-size: 1.4rem; margin-bottom: .2rem; }
+  .profile-role { font-size: .68rem; font-family: 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--purple); margin-bottom: .75rem; }
+  .profile-bio { font-size: .88rem; color: var(--ink2); line-height: 1.75; margin-bottom: 1rem; }
+  .profile-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: .62rem; font-family: 'DM Mono', monospace; letter-spacing: .07em;
+    text-transform: uppercase; padding: 4px 10px; border: 1px solid var(--border);
+    border-radius: 20px; color: var(--ink2);
+  }
+
+  /* STACK */
+  .stack-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .stack-group { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.1rem; }
+  .stack-group-title { font-size: .6rem; font-family: 'DM Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--ink3); margin-bottom: .85rem; }
+  .stack-items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .stack-item {
+    font-size: .68rem; font-family: 'DM Mono', monospace; padding: 4px 10px;
+    background: var(--bg2); border-radius: 4px; color: var(--ink2);
+    border: 1px solid transparent; transition: border-color .15s, color .15s;
+  }
+  .stack-item:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border); padding: 2rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    max-width: 900px; margin: 0 auto;
+  }
+  footer span { font-size: .65rem; font-family: 'DM Mono', monospace; color: var(--ink3); letter-spacing: .07em; }
+  footer a { font-size: .65rem; font-family: 'DM Mono', monospace; color: var(--purple); text-decoration: none; letter-spacing: .07em; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: none; } }
+  .fade-up { opacity: 0; animation: fadeUp .5s ease forwards; }
+  .fade-up:nth-child(1) { animation-delay: .05s; }
+  .fade-up:nth-child(2) { animation-delay: .12s; }
+  .fade-up:nth-child(3) { animation-delay: .19s; }
+  .fade-up:nth-child(4) { animation-delay: .26s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-badge { display: none; }
+    .stats-grid { grid-template-columns: repeat(2,1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+    .calc-grid { grid-template-columns: 1fr; }
+    .profile-grid { grid-template-columns: 1fr; }
+    .stack-grid { grid-template-columns: 1fr; }
+    .funnel-out { grid-template-columns: repeat(2,1fr); }
+    .org-teams { gap: 24px; }
+    nav .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">
+    🦇 <span>Fernando L. Paoli</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#calculator">Calculator</a></li>
+    <li><a href="#team">The Team</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <a class="nav-cta" href="https://www.linkedin.com/in/fernandopaoli" target="_blank">Connect →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-eyebrow fade-up">People Analytics Tools</div>
+    <h1 class="hero-title fade-up">Recruiting data,<br><em>made visible.</em></h1>
+    <p class="hero-sub fade-up">Interactive dashboards, recruiting calculators and a very unconventional org chart — built by a Tech Recruiter who takes People Analytics seriously. And caffeine.</p>
+    <div class="hero-btns fade-up">
+      <a class="btn-primary" href="#dashboard">View dashboard</a>
+      <a class="btn-secondary" href="#calculator">Open calculator</a>
+    </div>
+  </div>
+  <div class="hero-badge fade-up">
+    <div class="hero-badge-num">200+</div>
+    <div class="hero-badge-label">Total Hires</div>
+    <div class="hero-badge-sub">Tech &amp; Civil Engineering<br>2018 → present</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="section" id="dashboard">
+  <div class="sec-eyebrow">01 · Dashboard</div>
+  <h2 class="sec-title">By the numbers</h2>
+  <p class="sec-sub">Real data from 200+ placements across technology services, startups and civil engineering.</p>
+
+  <div class="stats-grid">
+    <div class="stat-card fade-up">
+      <div class="stat-card-num" style="color:var(--purple)">200+</div>
+      <div class="stat-card-label">Total hires</div>
+    </div>
+    <div class="stat-card fade-up">
+      <div class="stat-card-num" style="color:var(--cyan)">100</div>
+      <div class="stat-card-label">Tech placements</div>
+    </div>
+    <div class="stat-card fade-up">
+      <div class="stat-card-num" style="color:var(--amber)">100</div>
+      <div class="stat-card-label">Civil eng. placements</div>
+    </div>
+    <div class="stat-card fade-up">
+      <div class="stat-card-num" style="color:var(--rose)">1</div>
+      <div class="stat-card-label">Director hired (tech)</div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-card-label">Hires by level</div>
+      <div class="chart-canvas-wrap"><canvas id="c-level"></canvas></div>
+      <div class="custom-legend" id="leg-level"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-label">Sector breakdown</div>
+      <div class="chart-canvas-wrap"><canvas id="c-sector"></canvas></div>
+      <div class="custom-legend" id="leg-sector"></div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:14px">
+    <div class="chart-card-label">Hires by level — detail view</div>
+    <div class="bar-rows" id="bar-detail"></div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-card-label">Technology sub-sector</div>
+      <div class="chart-canvas-wrap"><canvas id="c-tech"></canvas></div>
+      <div class="custom-legend" id="leg-tech"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-card-label">Caffeine consumed — daily survival kit</div>
+      <div class="chart-canvas-wrap"><canvas id="c-caf"></canvas></div>
+      <div class="custom-legend" id="leg-caf"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<div class="section" id="calculator">
+  <div class="sec-eyebrow">02 · Calculator</div>
+  <h2 class="sec-title">Recruiting metrics</h2>
+  <p class="sec-sub">Calculate key hiring KPIs in real time. Pick a metric below.</p>
+
+  <div class="tabs-nav">
+    <button class="active" onclick="swCalc('tth',this)">Time-to-Hire</button>
+    <button onclick="swCalc('cph',this)">Cost per Hire</button>
+    <button onclick="swCalc('fnl',this)">Selection Funnel</button>
+  </div>
+
+  <div id="cp-tth">
+    <div class="calc-grid">
+      <div class="field"><label>Days the role was open</label><input type="number" id="tth-d" placeholder="e.g. 38" min="0"></div>
+      <div class="field"><label>Industry benchmark (days)</label><input type="number" id="tth-b" placeholder="e.g. 42" min="0"></div>
+    </div>
+    <button class="btn-primary" onclick="cTTH()">Calculate →</button>
+    <div class="calc-result" id="r-tth">
+      <div><div class="res-label">Time-to-Hire</div><div class="res-val" id="rv-tth">—</div></div>
+      <div class="res-tag" id="rt-tth"></div>
+    </div>
+  </div>
+
+  <div id="cp-cph" style="display:none">
+    <div class="calc-grid">
+      <div class="field"><label>Internal costs (R$)</label><input type="number" id="cph-i" placeholder="e.g. 3000" min="0"></div>
+      <div class="field"><label>External costs (R$)</label><input type="number" id="cph-e" placeholder="e.g. 1500" min="0"></div>
+    </div>
+    <div class="field"><label>Total hires in this period</label><input type="number" id="cph-h" placeholder="e.g. 10" min="1"></div>
+    <button class="btn-primary" onclick="cCPH()">Calculate →</button>
+    <div class="calc-result" id="r-cph">
+      <div><div class="res-label">Cost per Hire</div><div class="res-val" id="rv-cph">—</div></div>
+      <div class="res-tag" id="rt-cph"></div>
+    </div>
+  </div>
+
+  <div id="cp-fnl" style="display:none">
+    <div class="calc-grid">
+      <div class="field"><label>Applications received</label><input type="number" id="fn-a" placeholder="e.g. 200" min="1"></div>
+      <div class="field"><label>Screened (phone / CV)</label><input type="number" id="fn-s" placeholder="e.g. 40" min="0"></div>
+    </div>
+    <div class="calc-grid">
+      <div class="field"><label>Interviewed</label><input type="number" id="fn-i" placeholder="e.g. 12" min="0"></div>
+      <div class="field"><label>Offers made</label><input type="number" id="fn-o" placeholder="e.g. 3" min="0"></div>
+    </div>
+    <div class="field"><label>Hires</label><input type="number" id="fn-h" placeholder="e.g. 1" min="0"></div>
+    <button class="btn-primary" onclick="cFnl()">Calculate →</button>
+    <div class="funnel-out" id="fnl-out"></div>
+  </div>
+</div>
+
+<!-- ORG CHART -->
+<div class="section" id="team">
+  <div class="sec-eyebrow">03 · The Team</div>
+  <h2 class="sec-title">Org chart</h2>
+  <p class="sec-sub">My dream team. Do not ask questions.</p>
+  <p class="org-hint">Click a card to flip and reveal the secret performance review · Hover for the official title rating</p>
+
+  <div class="org-wrap">
+    <div class="org-member-wrap">
+      <div class="org-tip">Self-evaluated as "exceeds expectations." No one disagreed.</div>
+      <div class="org-boss">
+        <div class="org-boss-emo">🦇</div>
+        <div class="org-boss-name">Fernando Paoli</div>
+        <div class="org-boss-role">Tech Recruiter · People Analytics</div>
+      </div>
+    </div>
+    <div class="org-vline"></div>
+    <div class="org-hline" style="width:min(520px,88%)"></div>
+    <div class="org-teams" id="org-teams"></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="section" id="about">
+  <div class="sec-eyebrow">04 · About</div>
+  <h2 class="sec-title">Fernando L. Paoli</h2>
+  <p class="sec-sub" style="margin-bottom:2rem">The human behind the data.</p>
+
+  <div class="profile-grid" style="margin-bottom:2.5rem">
+    <div class="profile-avatar">🦇</div>
+    <div>
+      <div class="profile-name">Fernando L. Paoli</div>
+      <div class="profile-role">Tech Recruiter · People Analytics · São Paulo, BR</div>
+      <p class="profile-bio">
+        I'm a very curious person who loves learning about technology and people. I hold a specialization in Human Resources Management and currently work as a Tech Recruiter with a strong interest in People Analytics. I also help people transition into new careers and improve their resumes — connecting the right people to the right opportunities.
+      </p>
+      <div class="profile-tags">
+        <span class="tag">Tech Recruiting</span>
+        <span class="tag">People Analytics</span>
+        <span class="tag">Career Coaching</span>
+        <span class="tag">Resume Review</span>
+        <span class="tag">10k+ LinkedIn followers</span>
+        <span class="tag">200+ hires</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stack-grid">
+    <div class="stack-group">
+      <div class="stack-group-title">💻 Tech</div>
+      <div class="stack-items">
+        <span class="stack-item">Python</span>
+        <span class="stack-item">HTML</span>
+        <span class="stack-item">CSS</span>
+        <span class="stack-item">JavaScript</span>
+        <span class="stack-item">Git</span>
+      </div>
+    </div>
+    <div class="stack-group">
+      <div class="stack-group-title">📊 Data & Analytics</div>
+      <div class="stack-items">
+        <span class="stack-item">Power BI</span>
+        <span class="stack-item">Excel</span>
+        <span class="stack-item">SQL</span>
+      </div>
+    </div>
+    <div class="stack-group">
+      <div class="stack-group-title">🧠 Recruiting Tools</div>
+      <div class="stack-items">
+        <span class="stack-item">LI Recruiter</span>
+        <span class="stack-item">Slack</span>
+        <span class="stack-item">Trello</span>
+        <span class="stack-item">Miro</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>Fernando L. Paoli · People Analytics Tools · São Paulo, BR</span>
+  <a href="https://www.linkedin.com/in/fernandopaoli" target="_blank">linkedin/fernandopaoli →</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// CHARTS
+const COLORS = { purple:'#6366f1', cyan:'#06b6d4', amber:'#f59e0b', rose:'#f43f5e', green:'#10b981', gray:'#94a3b8' };
+
+function buildDonut(id, legId, labels, data, colors) {
+  new Chart(document.getElementById(id), {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 0, hoverOffset: 6 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '62%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => ' ' + c.label + ': ' + c.parsed + (c.parsed <= 100 ? '%' : ' hires') } }
+      }
+    }
+  });
+  const leg = document.getElementById(legId);
+  labels.forEach((l, i) => {
+    const s = document.createElement('span'); s.className = 'leg-item';
+    s.innerHTML = `<span class="leg-dot" style="background:${colors[i]}"></span>${l} — ${data[i]}${data[i] <= 100 ? '%' : ' hires'}`;
+    leg.appendChild(s);
+  });
+}
+
+buildDonut('c-level', 'leg-level',
+  ['Basic (Assistants/Juniors)', 'Intermediate (Pleno/Sênior)', 'Advanced (Specialists/Managers)', 'Director'],
+  [100, 74, 25, 1],
+  [COLORS.purple, COLORS.cyan, COLORS.amber, COLORS.rose]
+);
+
+buildDonut('c-sector', 'leg-sector',
+  ['Technology (Services & Startups)', 'Civil Engineering (Supply Chain & Construction)'],
+  [100, 100],
+  [COLORS.purple, COLORS.cyan]
+);
+
+buildDonut('c-tech', 'leg-tech',
+  ['Tech Services', 'Startups'],
+  [65, 35],
+  [COLORS.purple, COLORS.amber]
+);
+
+buildDonut('c-caf', 'leg-caf',
+  ['Monster Energy', 'Coffee', 'Thermogenics'],
+  [80, 15, 5],
+  [COLORS.rose, COLORS.purple, COLORS.amber]
+);
+
+// BAR CHART MANUAL
+const barData = [
+  { label: 'Basic (100)', pct: 50, color: COLORS.purple },
+  { label: 'Intermediate (74)', pct: 37, color: COLORS.cyan },
+  { label: 'Advanced (25)', pct: 12.5, color: COLORS.amber },
+  { label: 'Director (1)', pct: 0.5, color: COLORS.rose },
+];
+const barWrap = document.getElementById('bar-detail');
+barData.forEach(b => {
+  barWrap.innerHTML += `<div class="bar-row">
+    <span class="bar-lbl">${b.label}</span>
+    <div class="bar-track"><div class="bar-fill" data-pct="${b.pct}" style="background:${b.color}"></div></div>
+    <span class="bar-val">${b.pct}%</span>
+  </div>`;
+});
+setTimeout(() => document.querySelectorAll('.bar-fill').forEach(el => el.style.width = el.dataset.pct + '%'), 300);
+
+// CALCULATOR TABS
+function swCalc(t, btn) {
+  ['tth','cph','fnl'].forEach(k => document.getElementById('cp-' + k).style.display = 'none');
+  document.querySelectorAll('.tabs-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('cp-' + t).style.display = 'block';
+  btn.classList.add('active');
+}
+
+function showResult(el) { el.classList.add('show'); }
+
+function cTTH() {
+  const d = parseFloat(document.getElementById('tth-d').value) || 0;
+  const b = parseFloat(document.getElementById('tth-b').value) || 42;
+  if (!d) return;
+  const diff = Math.round(d - b);
+  document.getElementById('rv-tth').textContent = d + ' days';
+  document.getElementById('rt-tth').textContent = diff < 0
+    ? '▼ ' + Math.abs(diff) + ' days below benchmark'
+    : diff > 0 ? '▲ ' + diff + ' days above benchmark'
+    : 'Right on benchmark';
+  showResult(document.getElementById('r-tth'));
+}
+
+function cCPH() {
+  const i = parseFloat(document.getElementById('cph-i').value) || 0;
+  const e = parseFloat(document.getElementById('cph-e').value) || 0;
+  const h = parseFloat(document.getElementById('cph-h').value) || 1;
+  document.getElementById('rv-cph').textContent = 'R$ ' + Math.round((i + e) / h).toLocaleString('pt-BR');
+  document.getElementById('rt-cph').textContent = 'Total invested: R$ ' + (i + e).toLocaleString('pt-BR');
+  showResult(document.getElementById('r-cph'));
+}
+
+function cFnl() {
+  const a = parseFloat(document.getElementById('fn-a').value) || 1;
+  const s = parseFloat(document.getElementById('fn-s').value) || 0;
+  const i = parseFloat(document.getElementById('fn-i').value) || 0;
+  const o = parseFloat(document.getElementById('fn-o').value) || 0;
+  const h = parseFloat(document.getElementById('fn-h').value) || 0;
+  const cards = [
+    { l: 'Screen rate', v: ((s / a) * 100).toFixed(1) + '%' },
+    { l: 'Interview rate', v: ((i / a) * 100).toFixed(1) + '%' },
+    { l: 'Offer rate', v: ((o / a) * 100).toFixed(1) + '%' },
+    { l: 'CVs per hire', v: h > 0 ? Math.round(a / h) + ' : 1' : '—' },
+  ];
+  const el = document.getElementById('fnl-out');
+  el.innerHTML = cards.map(c => `<div class="fc"><div class="fc-n">${c.v}</div><div class="fc-l">${c.l}</div></div>`).join('');
+  el.classList.add('show');
+}
+
+// ORG CHART
+const TEAMS = [
+  {
+    label: '🐾 Animal Resources',
+    members: [
+      { e: '🐱', n: 'Woody', r: 'Senior Nap Analyst', tip: 'Attends meetings only if treats are involved.', secret: 'Expertise: horizontal surfaces & strategic ignoring.' },
+      { e: '🐱', n: 'Lazuli', r: 'Head of Chaos Mgmt', tip: 'Knocked 3 laptops off the desk. Claims it was market research.', secret: 'Speciality: desk demolition. OKRs: unclear.' },
+      { e: '🐱', n: 'Petra', r: 'Director of Vibes', tip: 'Most photogenic employee 3 years running. Zero deliverables.', secret: 'KPI: ambient mood score. Always green.' },
+    ]
+  },
+  {
+    label: '🛟 Emotional Support',
+    members: [
+      { e: '🍸', n: 'Absolut Vodka', r: 'VP After-Hours Support', tip: 'Available 24/7. Especially at 2am on a Friday.', secret: 'SLA: immediately. No tickets required.' },
+      { e: '🧊', n: 'Black Ice', r: 'Chief Cooling Officer', tip: 'Cool under pressure. Literally. Never overheats.', secret: 'Threat level: slippery. Handle with care.' },
+    ]
+  }
+];
+
+const teamsEl = document.getElementById('org-teams');
+TEAMS.forEach(team => {
+  const col = document.createElement('div');
+  col.className = 'org-team';
+  col.innerHTML = `
+    <div class="org-vline"></div>
+    <div class="org-team-label">${team.label}</div>
+    <div class="org-vline"></div>
+    <div class="org-hline" style="width:${team.members.length > 2 ? '280px' : '160px'}"></div>
+    <div class="org-members" id="members-${team.label.replace(/\s/g,'')}"></div>
+  `;
+  teamsEl.appendChild(col);
+  const membersEl = col.querySelector('.org-members');
+  team.members.forEach(m => {
+    const branch = document.createElement('div');
+    branch.className = 'org-branch';
+    branch.innerHTML = `
+      <div class="org-vline"></div>
+      <div class="org-member-wrap">
+        <div class="org-tip">${m.tip}</div>
+        <div class="org-card" onclick="this.classList.toggle('flipped')">
+          <div class="org-card-emo">${m.e}</div>
+          <div class="org-card-name">${m.n}</div>
+          <div class="org-card-role">${m.r}</div>
+          <div class="org-card-secret">${m.secret}</div>
+        </div>
+      </div>`;
+    membersEl.appendChild(branch);
+  });
+});
+</script>
+</body>
+</html>
